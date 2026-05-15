@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TextHider — Privacy Policy</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 24px; color: #222; line-height: 1.7; }
+    h1 { color: #e94560; }
+    h2 { margin-top: 28px; color: #333; }
+    p, li { color: #444; }
+    a { color: #e94560; }
+    footer { margin-top: 40px; font-size: 12px; color: #999; }
+  </style>
+</head>
+<body>
+  <h1>TextHider — Privacy Policy</h1>
+  <p><strong>Effective date:</strong> May 15, 2026</p>
+
+  <h2>1. Overview</h2>
+  <p>
+    TextHider ("the Extension") is a Chrome browser extension that allows users to visually mask
+    selected text on web pages. We are committed to user privacy. This policy explains what data
+    is (and is not) collected.
+  </p>
+
+  <h2>2. Data We Do NOT Collect</h2>
+  <ul>
+    <li>We do <strong>not</strong> collect, transmit, or store the text you select or hide.</li>
+    <li>We do <strong>not</strong> collect browsing history, URLs, or page content.</li>
+    <li>We do <strong>not</strong> send any data to external servers.</li>
+    <li>We do <strong>not</strong> use analytics, tracking pixels, or third-party SDKs.</li>
+    <li>We do <strong>not</strong> collect personally identifiable information (PII).</li>
+  </ul>
+
+  <h2>3. Data Stored Locally</h2>
+  <p>
+    The Extension uses <strong>Chrome's <code>storage.sync</code> API</strong> solely to save
+    your personal preferences (mask presets, theme, and behavior toggles). This data:
+  </p>
+  <ul>
+    <li>Is stored in your Google account's sync storage (if signed in to Chrome) or locally.</li>
+    <li>Contains only your chosen preset labels, symbols, and UI preferences — never page content.</li>
+    <li>Can be deleted at any time via the Options page ("Reset to Defaults") or by removing the extension.</li>
+  </ul>
+
+  <h2>4. Permissions Justification</h2>
+  <ul>
+    <li><strong>contextMenus</strong> — Required to add the "TextHider" right-click menu.</li>
+    <li><strong>storage</strong> — Required to save your preset preferences across sessions.</li>
+    <li><strong>activeTab / scripting</strong> — Required to inject the masking style and logic into the current tab when you use the extension. The extension only acts on the tab you are actively using and only when triggered by you.</li>
+    <li><strong>host_permissions (&lt;all_urls&gt;)</strong> — Required so the right-click menu appears on any website. No page content is read or transmitted.</li>
+  </ul>
+
+  <h2>5. Third-Party Services</h2>
+  <p>The Extension does not integrate with any third-party services, APIs, or advertisement networks.</p>
+
+  <h2>6. Children's Privacy</h2>
+  <p>The Extension does not collect any data and is therefore suitable for all ages.</p>
+
+  <h2>7. Changes to This Policy</h2>
+  <p>
+    If this policy changes, the updated version will be published with a new effective date.
+    Continued use of the Extension constitutes acceptance of the updated policy.
+  </p>
+
+  <h2>8. Contact</h2>
+  <p>
+    If you have questions about this privacy policy, please open an issue on the
+    <a href="https://github.com/texthider/texthider-extension" target="_blank">GitHub repository</a>.
+  </p>
+
+  <footer>
+    &copy; 2026 TextHider. All rights reserved.
+  </footer>
+</body>
+</html>

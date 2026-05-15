@@ -1,0 +1,31 @@
+/* TextHider masked text styles */
+
+.texthider-masked {
+  display: inline;
+  background-color: #1a1a2e;
+  color: #e94560;
+  border-radius: 3px;
+  padding: 0 2px;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  user-select: none;
+  position: relative;
+}
+
+.texthider-masked:hover {
+  background-color: #e94560;
+  color: #ffffff;
+}
+
+.texthider-masked[data-texthider-revealed="true"] {
+  background-color: #2ecc71;
+  color: #000000;
+}
+
+.texthider-masked[data-texthider-revealed="true"]:hover {
+  background-color: #27ae60;
+  color: #ffffff;
+}

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TextHider</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 320px;
+      background: #0f0f1a;
+      color: #fff;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+    }
+
+    header {
+      background: #1a1a2e;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 2px solid #e94560;
+    }
+
+    header img { width: 28px; height: 28px; }
+
+    header h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #e94560;
+      flex: 1;
+    }
+
+    header a {
+      font-size: 11px;
+      color: #888;
+      text-decoration: none;
+    }
+    header a:hover { color: #e94560; }
+
+    .section {
+      padding: 14px 16px;
+      border-bottom: 1px solid #1f1f35;
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 10px;
+    }
+
+    /* Preset grid */
+    .presets {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .preset-btn {
+      background: #1a1a2e;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      padding: 8px 4px;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color 0.15s, background 0.15s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .preset-btn .icon { font-size: 18px; line-height: 1; }
+    .preset-btn .label { font-size: 9px; color: #888; line-height: 1; }
+
+    .preset-btn:hover,
+    .preset-btn.active {
+      border-color: #e94560;
+      background: #2a1a2e;
+    }
+
+    /* Custom mask row */
+    .custom-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .custom-row input {
+      flex: 1;
+      background: #1a1a2e;
+      border: 2px solid #333;
+      border-radius: 8px;
+      padding: 8px 10px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .custom-row input:focus { border-color: #e94560; }
+
+    .btn {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: background 0.15s;
+    }
+
+    .btn-primary { background: #e94560; color: #fff; }
+    .btn-primary:hover { background: #c73652; }
+
+    .btn-secondary { background: #1a1a2e; color: #aaa; border: 1px solid #333; }
+    .btn-secondary:hover { background: #252540; color: #fff; }
+
+    .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+    /* Stats row */
+    .stats {
+      display: flex;
+      gap: 10px;
+    }
+
+    .stat-card {
+      flex: 1;
+      background: #1a1a2e;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .stat-card .num {
+      font-size: 22px;
+      font-weight: 700;
+      color: #e94560;
+    }
+
+    .stat-card .desc { font-size: 10px; color: #888; margin-top: 2px; }
+
+    /* Action buttons */
+    .actions { display: flex; gap: 8px; }
+    .actions .btn { flex: 1; }
+
+    footer {
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer a {
+      font-size: 11px;
+      color: #888;
+      text-decoration: none;
+    }
+    footer a:hover { color: #e94560; }
+
+    .toast {
+      position: fixed;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #e94560;
+      color: #fff;
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="icons/icon48.png" alt="TextHider" />
+  <h1>TextHider</h1>
+  <a href="#" id="open-options">⚙️ Settings</a>
+</header>
+
+<!-- Preset masks -->
+<div class="section">
+  <div class="section-title">Quick Presets — select text then click</div>
+  <div class="presets" id="presets-grid">
+    <!-- Populated by JS -->
+  </div>
+</div>
+
+<!-- Custom mask -->
+<div class="section">
+  <div class="section-title">Custom Mask</div>
+  <div class="custom-row">
+    <input type="text" id="custom-mask-input" placeholder="e.g. ★ or 💀 or @" maxlength="10" />
+    <button class="btn btn-primary btn-sm" id="apply-custom">Apply</button>
+    <button class="btn btn-secondary btn-sm" id="save-custom" title="Save as preset">💾</button>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="section">
+  <div class="section-title">This Page</div>
+  <div class="stats">
+    <div class="stat-card">
+      <div class="num" id="count-hidden">0</div>
+      <div class="desc">Hidden items</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" id="count-revealed">0</div>
+      <div class="desc">Revealed</div>
+    </div>
+  </div>
+</div>
+
+<!-- Actions -->
+<div class="section">
+  <div class="section-title">Page Actions</div>
+  <div class="actions">
+    <button class="btn btn-secondary btn-sm" id="btn-reveal-all">👁️ Reveal All</button>
+    <button class="btn btn-secondary btn-sm" id="btn-rehide-all">🔒 Re-hide All</button>
+  </div>
+</div>
+
+<footer>
+  <a href="#" id="open-options-footer">⚙️ Options &amp; Custom Presets</a>
+  <a href="privacy.html" target="_blank">Privacy</a>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="popup.js"></script>
+</body>
+</html>
