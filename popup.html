@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TextHider</title>
+  <meta name="description" content="TextHider: Instantly hide selected text on any webpage with symbols, emojis, or custom masks." />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>TextHider — Hide &amp; Mask Text</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -181,7 +183,7 @@
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
 </head>
-<body>
+<body role="main" aria-label="TextHider extension popup">
 
 <header>
   <img src="icons/icon48.png" alt="TextHider" />
@@ -190,20 +192,21 @@
 </header>
 
 <!-- Preset masks -->
-<div class="section">
+<div class="section" role="region" aria-label="Quick Presets">
   <div class="section-title">Quick Presets — select text then click</div>
-  <div class="presets" id="presets-grid">
+  <div class="presets" id="presets-grid" role="group" aria-label="Mask preset buttons">
     <!-- Populated by JS -->
   </div>
 </div>
 
 <!-- Custom mask -->
-<div class="section">
+<div class="section" role="region" aria-label="Custom mask input">
   <div class="section-title">Custom Mask</div>
   <div class="custom-row">
-    <input type="text" id="custom-mask-input" placeholder="e.g. ★ or 💀 or @" maxlength="10" />
-    <button class="btn btn-primary btn-sm" id="apply-custom">Apply</button>
-    <button class="btn btn-secondary btn-sm" id="save-custom" title="Save as preset">💾</button>
+    <input type="text" id="custom-mask-input" placeholder="e.g. ★ or 💀 or @" maxlength="10"
+           aria-label="Enter a custom mask symbol or emoji" />
+    <button class="btn btn-primary btn-sm" id="apply-custom" aria-label="Apply custom mask">Apply</button>
+    <button class="btn btn-secondary btn-sm" id="save-custom" title="Save as preset" aria-label="Save custom mask as preset">💾</button>
   </div>
 </div>
 
@@ -229,10 +232,14 @@
     <button class="btn btn-secondary btn-sm" id="btn-reveal-all">👁️ Reveal All</button>
     <button class="btn btn-secondary btn-sm" id="btn-rehide-all">🔒 Re-hide All</button>
   </div>
+  <div class="actions" style="margin-top:6px;">
+    <button class="btn btn-secondary btn-sm" id="btn-hide-all-occ" title="Hide every occurrence of selected text on this page">🔄 Hide All Occurrences</button>
+  </div>
 </div>
 
 <footer>
-  <a href="#" id="open-options-footer">⚙️ Options &amp; Custom Presets</a>
+  <a href="#" id="open-options-footer">⚙️ Options &amp; Presets</a>
+  <span style="font-size:10px;color:#555;" title="Keyboard shortcut: Ctrl+Shift+H">⌨️ Ctrl+Shift+H</span>
   <a href="privacy.html" target="_blank">Privacy</a>
 </footer>
 

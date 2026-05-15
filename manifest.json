@@ -3,7 +3,7 @@
   "name": "TextHider - Censor & Mask Text",
   "short_name": "TextHider",
   "version": "1.0.0",
-  "description": "Select any text on a webpage, right-click, and hide it with symbols like ..., ❤️, ***, or your own custom mask. Each word is replaced by the same number of symbols.",
+  "description": "Select text, right-click, and hide it with ..., ***, emojis or a custom mask. Each word is replaced by the same number of symbols.",
   "author": "TextHider",
   "homepage_url": "https://github.com/texthider",
 
@@ -53,6 +53,16 @@
     "32": "icons/icon32.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
+  },
+
+  "commands": {
+    "hide-selection": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+H",
+        "mac": "Command+Shift+H"
+      },
+      "description": "Hide selected text with last used mask"
+    }
   },
 
   "web_accessible_resources": [

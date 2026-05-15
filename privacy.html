@@ -3,16 +3,500 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TextHider — Privacy Policy</title>
+
+  <!-- Primary SEO -->
+  <title>Privacy Policy — TextHider Chrome Extension</title>
+  <meta name="description" content="TextHider collects zero user data. Read our full privacy policy to learn how we protect your privacy when masking text on any webpage." />
+  <meta name="keywords" content="TextHider privacy policy, Chrome extension privacy, text masking extension, no data collection, GDPR" />
+  <meta name="author" content="TextHider" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://shariarf39.github.io/TextHider-Extention/privacy.html" />
+
+  <!-- Open Graph (Facebook, LinkedIn, WhatsApp) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="TextHider" />
+  <meta property="og:title" content="Privacy Policy — TextHider Chrome Extension" />
+  <meta property="og:description" content="TextHider collects absolutely zero user data. No browsing history, no page content, no personal information. See full details." />
+  <meta property="og:url" content="https://shariarf39.github.io/TextHider-Extention/privacy.html" />
+  <meta property="og:image" content="https://shariarf39.github.io/TextHider-Extention/icons/icon128.png" />
+  <meta property="og:image:width" content="128" />
+  <meta property="og:image:height" content="128" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Privacy Policy — TextHider Chrome Extension" />
+  <meta name="twitter:description" content="TextHider collects zero user data. No tracking, no analytics, no PII. See full privacy policy." />
+  <meta name="twitter:image" content="https://shariarf39.github.io/TextHider-Extention/icons/icon128.png" />
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Privacy Policy — TextHider Chrome Extension",
+    "description": "TextHider collects zero user data. This privacy policy explains what data is and is not collected by the TextHider browser extension.",
+    "url": "https://shariarf39.github.io/TextHider-Extention/privacy.html",
+    "inLanguage": "en-US",
+    "datePublished": "2026-05-15",
+    "dateModified": "2026-05-15",
+    "publisher": {
+      "@type": "Organization",
+      "name": "TextHider",
+      "url": "https://github.com/shariarf39/TextHider-Extention"
+    },
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "TextHider", "item": "https://github.com/shariarf39/TextHider-Extention" },
+        { "@type": "ListItem", "position": 2, "name": "Privacy Policy", "item": "https://shariarf39.github.io/TextHider-Extention/privacy.html" }
+      ]
+    }
+  }
+  </script>
+
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 24px; color: #222; line-height: 1.7; }
-    h1 { color: #e94560; }
-    h2 { margin-top: 28px; color: #333; }
-    p, li { color: #444; }
-    a { color: #e94560; }
-    footer { margin-top: 40px; font-size: 12px; color: #999; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent: #e94560;
+      --text: #222;
+      --muted: #555;
+      --bg: #fff;
+      --border: #eee;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+      font-size: 15px;
+    }
+
+    /* Skip-to-content for accessibility */
+    .skip-link {
+      position: absolute;
+      left: -999px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+    .skip-link:focus {
+      position: fixed;
+      left: 16px;
+      top: 16px;
+      width: auto;
+      height: auto;
+      background: var(--accent);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 6px;
+      z-index: 9999;
+      font-weight: 600;
+    }
+
+    /* ---- Header ---- */
+    header {
+      background: #1a1a2e;
+      border-bottom: 3px solid var(--accent);
+      padding: 18px 24px;
+    }
+
+    header .inner {
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    header img { width: 40px; height: 40px; flex-shrink: 0; }
+
+    header .brand {
+      display: flex;
+      flex-direction: column;
+    }
+
+    header .brand-name {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--accent);
+      text-decoration: none;
+      line-height: 1.2;
+    }
+    header .brand-name:hover { text-decoration: underline; }
+
+    header .brand-tagline {
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 2px;
+    }
+
+    /* ---- Breadcrumb ---- */
+    nav[aria-label="Breadcrumb"] {
+      background: #f9f9f9;
+      border-bottom: 1px solid var(--border);
+      padding: 8px 24px;
+    }
+
+    .breadcrumb {
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      list-style: none;
+    }
+
+    .breadcrumb li + li::before { content: '›'; margin-right: 6px; }
+    .breadcrumb a { color: var(--accent); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb [aria-current] { color: var(--muted); }
+
+    /* ---- Main content ---- */
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 24px 60px;
+    }
+
+    .page-hero {
+      margin-bottom: 36px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+
+    .meta {
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .meta time { font-weight: 600; }
+
+    /* ---- TOC ---- */
+    .toc {
+      background: #f9f9f9;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+      margin-bottom: 36px;
+    }
+
+    .toc h2 {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .toc ol {
+      margin: 0;
+      padding-left: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .toc a {
+      font-size: 13px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .toc a:hover { text-decoration: underline; }
+
+    /* ---- Sections ---- */
+    article section {
+      margin-bottom: 36px;
+    }
+
+    h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 12px;
+      padding-top: 4px;
+    }
+
+    p { margin-bottom: 12px; color: var(--text); }
+    p:last-child { margin-bottom: 0; }
+
+    ul, ol {
+      padding-left: 20px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    li { color: var(--text); }
+
+    strong { color: #111; }
+    code {
+      background: #f0f0f0;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: 'Courier New', monospace;
+    }
+
+    a { color: var(--accent); }
+    a:hover { text-decoration: underline; }
+
+    /* zero-data callout */
+    .callout {
+      background: #fff5f7;
+      border: 1px solid #ffc0cb;
+      border-left: 4px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      font-weight: 600;
+      color: #c0103a;
+      font-size: 14px;
+    }
+
+    /* permission table */
+    .perm-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+    .perm-table th {
+      background: #1a1a2e;
+      color: #fff;
+      text-align: left;
+      padding: 8px 12px;
+    }
+    .perm-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .perm-table tr:last-child td { border-bottom: none; }
+    .perm-table tr:nth-child(even) td { background: #fafafa; }
+
+    /* ---- Footer ---- */
+    footer {
+      background: #1a1a2e;
+      color: #aaa;
+      text-align: center;
+      padding: 20px 24px;
+      font-size: 12px;
+    }
+
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    footer .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 22px; }
+      main { padding: 24px 16px 40px; }
+      .perm-table { display: block; overflow-x: auto; }
+    }
   </style>
 </head>
+<body>
+
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <!-- Site Header -->
+  <header>
+    <div class="inner">
+      <img src="icons/icon128.png" width="40" height="40" alt="TextHider extension icon" />
+      <div class="brand">
+        <a class="brand-name" href="https://github.com/shariarf39/TextHider-Extention" rel="noopener">TextHider</a>
+        <span class="brand-tagline">Select, right-click, hide — on any webpage</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumb navigation -->
+  <nav aria-label="Breadcrumb">
+    <ol class="breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
+      <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="https://github.com/shariarf39/TextHider-Extention" rel="noopener">
+          <span itemprop="name">TextHider</span>
+        </a>
+        <meta itemprop="position" content="1" />
+      </li>
+      <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <span itemprop="name" aria-current="page">Privacy Policy</span>
+        <meta itemprop="position" content="2" />
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Main content -->
+  <main id="main-content">
+
+    <!-- Hero / intro -->
+    <div class="page-hero">
+      <h1>Privacy Policy</h1>
+      <div class="meta">
+        <span>Product: <strong>TextHider Chrome Extension</strong></span>
+        <span>Effective: <time datetime="2026-05-15">May 15, 2026</time></span>
+        <span>Version: <strong>1.0.0</strong></span>
+      </div>
+    </div>
+
+    <!-- Table of Contents -->
+    <nav class="toc" aria-label="Table of contents">
+      <h2>Contents</h2>
+      <ol>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#no-collection">Data We Do NOT Collect</a></li>
+        <li><a href="#local-storage">Data Stored Locally</a></li>
+        <li><a href="#permissions">Permissions Justification</a></li>
+        <li><a href="#third-party">Third-Party Services</a></li>
+        <li><a href="#children">Children’s Privacy</a></li>
+        <li><a href="#changes">Changes to This Policy</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ol>
+    </nav>
+
+    <article itemscope itemtype="https://schema.org/WebPage">
+      <meta itemprop="name" content="Privacy Policy — TextHider Chrome Extension" />
+      <meta itemprop="datePublished" content="2026-05-15" />
+      <meta itemprop="dateModified" content="2026-05-15" />
+
+      <section id="overview" aria-labelledby="h-overview">
+        <h2 id="h-overview">1. Overview</h2>
+        <p>
+          TextHider (“the Extension”) is a Chrome browser extension that lets users visually mask
+          selected text on any webpage using symbols, emojis, or custom characters. We are fully
+          committed to user privacy. This policy explains exactly what data is — and is not — collected.
+        </p>
+      </section>
+
+      <section id="no-collection" aria-labelledby="h-no-collection">
+        <h2 id="h-no-collection">2. Data We Do NOT Collect</h2>
+        <div class="callout" role="note">&#x1F6AB; We collect absolutely zero user data. Nothing you select, type, or hide is ever recorded or transmitted.</div>
+        <ul>
+          <li>We do <strong>not</strong> collect, transmit, or store the text you select or hide.</li>
+          <li>We do <strong>not</strong> collect browsing history, URLs, or page content.</li>
+          <li>We do <strong>not</strong> send any data to external servers.</li>
+          <li>We do <strong>not</strong> use analytics, tracking pixels, or third-party SDKs.</li>
+          <li>We do <strong>not</strong> collect personally identifiable information (PII).</li>
+          <li>We do <strong>not</strong> serve advertisements or sell data to any third party.</li>
+        </ul>
+      </section>
+
+      <section id="local-storage" aria-labelledby="h-local-storage">
+        <h2 id="h-local-storage">3. Data Stored Locally</h2>
+        <p>
+          The Extension uses <strong>Chrome’s <code>storage.sync</code> API</strong> solely to save
+          your personal preferences. This data:
+        </p>
+        <ul>
+          <li>Is stored in your Google account’s sync storage (if signed in to Chrome) or locally on your device.</li>
+          <li>Contains <strong>only</strong> your chosen preset labels, mask symbols, theme choice, and UI toggles — <em>never</em> any page content.</li>
+          <li>Can be deleted at any time via the Options page (“Reset to Defaults”) or by removing the extension from Chrome.</li>
+          <li>Is never accessed by anyone other than you.</li>
+        </ul>
+      </section>
+
+      <section id="permissions" aria-labelledby="h-permissions">
+        <h2 id="h-permissions">4. Permissions Justification</h2>
+        <p>The following permissions are declared in the extension manifest. Each is strictly necessary:</p>
+        <table class="perm-table" role="table" aria-label="Extension permissions">
+          <thead>
+            <tr><th scope="col">Permission</th><th scope="col">Why it’s needed</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>contextMenus</code></td>
+              <td>Adds the “TextHider” entry to the browser’s right-click context menu.</td>
+            </tr>
+            <tr>
+              <td><code>storage</code></td>
+              <td>Saves your preset preferences (labels, symbols, theme) across sessions.</td>
+            </tr>
+            <tr>
+              <td><code>activeTab</code> &amp; <code>scripting</code></td>
+              <td>Injects the masking logic into the active tab <em>only when you trigger it</em>. The extension never runs automatically or in the background on pages.</td>
+            </tr>
+            <tr>
+              <td><code>host_permissions</code> (<code>&lt;all_urls&gt;</code>)</td>
+              <td>Required for the right-click menu to appear on any website. No page content is ever read or transmitted.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="third-party" aria-labelledby="h-third-party">
+        <h2 id="h-third-party">5. Third-Party Services</h2>
+        <p>The Extension does not integrate with any third-party services, APIs, analytics platforms, or advertising networks. All processing happens locally inside your browser.</p>
+      </section>
+
+      <section id="children" aria-labelledby="h-children">
+        <h2 id="h-children">6. Children’s Privacy</h2>
+        <p>
+          Because we collect no data whatsoever, the Extension is safe for all ages and complies with
+          COPPA (Children’s Online Privacy Protection Act) and similar regulations.
+        </p>
+      </section>
+
+      <section id="changes" aria-labelledby="h-changes">
+        <h2 id="h-changes">7. Changes to This Policy</h2>
+        <p>
+          If this policy is updated, the revised version will be published at the same URL with
+          an updated effective date. Continued use of the Extension after a policy change constitutes
+          acceptance of the updated terms.
+        </p>
+      </section>
+
+      <section id="contact" aria-labelledby="h-contact">
+        <h2 id="h-contact">8. Contact</h2>
+        <p>
+          Questions about this privacy policy? Open an issue on the
+          <a href="https://github.com/shariarf39/TextHider-Extention" target="_blank" rel="noopener noreferrer">GitHub repository</a>.
+          We aim to respond within 48 hours.
+        </p>
+      </section>
+    </article>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-links">
+      <a href="https://github.com/shariarf39/TextHider-Extention" rel="noopener">GitHub</a>
+      <a href="https://chrome.google.com/webstore" rel="noopener">Chrome Web Store</a>
+      <a href="#main-content">Back to top ↑</a>
+    </div>
+    <p>&copy; 2026 TextHider. All rights reserved. &nbsp;·&nbsp; Zero data collection policy.</p>
+  </footer>
+
+</body>
+</html>
 <body>
   <h1>TextHider — Privacy Policy</h1>
   <p><strong>Effective date:</strong> May 15, 2026</p>
@@ -67,7 +551,7 @@
   <h2>8. Contact</h2>
   <p>
     If you have questions about this privacy policy, please open an issue on the
-    <a href="https://github.com/texthider/texthider-extension" target="_blank">GitHub repository</a>.
+    <a href="https://github.com/shariarf39/TextHider-Extention" target="_blank">GitHub repository</a>.
   </p>
 
   <footer>

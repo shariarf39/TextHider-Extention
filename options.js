@@ -28,6 +28,7 @@ const THEME_STYLES = {
   gold:    { bg: '#1a1500', color: '#eab308', revealBg: '#fde68a', revealColor: '#000' },
   purple:  { bg: '#1a0a2e', color: '#a855f7', revealBg: '#c084fc', revealColor: '#000' },
   mono:    { bg: '#111',    color: '#888888', revealBg: '#ccc',    revealColor: '#000' },
+  none:    null, // special: no background, dotted underline only
 };
 
 let state = { ...DEFAULT_SETTINGS };
@@ -152,34 +153,11 @@ function applyStateToForm() {
 
 // ---- Save ----
 async function applyThemeToContentScripts() {
-  const theme = THEME_STYLES[state.theme] || THEME_STYLES.crimson;
-  // Inject dynamic CSS into all tabs
   const tabs = await chrome.tabs.query({});
   for (const tab of tabs) {
     if (!tab.id || !tab.url || tab.url.startsWith('chrome://')) continue;
     try {
-      await chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        func: (t) => {
-          let style = document.getElementById('texthider-theme');
-          if (!style) {
-            style = document.createElement('style');
-            style.id = 'texthider-theme';
-            document.head.appendChild(style);
-          }
-          style.textContent = `
-            .texthider-masked {
-              background-color: ${t.bg} !important;
-              color: ${t.color} !important;
-            }
-            .texthider-masked[data-texthider-revealed="true"] {
-              background-color: ${t.revealBg} !important;
-              color: ${t.revealColor} !important;
-            }
-          `;
-        },
-        args: [theme],
-      });
+      await chrome.tabs.sendMessage(tab.id, { type: 'APPLY_THEME', theme: state.theme });
     } catch (_) {}
   }
 }
@@ -217,6 +195,49 @@ document.getElementById('btn-reset').addEventListener('click', async () => {
   await chrome.storage.sync.set(DEFAULT_SETTINGS);
   state = { ...DEFAULT_SETTINGS };
   applyStateToForm();
+});
+
+// ---- Export / Import ----
+document.getElementById('btn-export').addEventListener('click', async () => {
+  const { presets, customMasks } = await chrome.storage.sync.get(['presets', 'customMasks']);
+  const data = JSON.stringify({ presets: presets || [], customMasks: customMasks || [] }, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'texthider-presets.json';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('btn-import').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    const text = await file.text();
+    const data = JSON.parse(text);
+    const status = document.getElementById('import-status');
+    if (!Array.isArray(data.presets) && !Array.isArray(data.customMasks)) {
+      status.textContent = '❌ Invalid file format.';
+      status.style.color = '#e94560';
+      status.style.display = 'block';
+      return;
+    }
+    if (Array.isArray(data.presets)) state.presets = data.presets;
+    if (Array.isArray(data.customMasks)) state.customMasks = data.customMasks;
+    await chrome.storage.sync.set({ presets: state.presets, customMasks: state.customMasks });
+    renderPresets();
+    status.textContent = `✅ Imported ${(data.presets?.length || 0) + (data.customMasks?.length || 0)} presets successfully.`;
+    status.style.color = '#2ecc71';
+    status.style.display = 'block';
+    setTimeout(() => { status.style.display = 'none'; }, 3000);
+  } catch (err) {
+    const status = document.getElementById('import-status');
+    status.textContent = '❌ Failed to parse file: ' + err.message;
+    status.style.color = '#e94560';
+    status.style.display = 'block';
+  }
+  e.target.value = ''; // reset file input
 });
 
 // ---- Load ----

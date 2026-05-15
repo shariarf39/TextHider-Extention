@@ -112,6 +112,31 @@ document.getElementById('btn-rehide-all').addEventListener('click', async () => 
   showToast('🔒 All re-hidden');
 });
 
+document.getElementById('btn-hide-all-occ').addEventListener('click', async () => {
+  const tab = await getActiveTab();
+  if (!tab?.id) return;
+  // Get the current text selection from the page
+  let selText = '';
+  try {
+    const [res] = await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: () => window.getSelection()?.toString() || '',
+    });
+    selText = res?.result?.trim() || '';
+  } catch (_) {}
+
+  if (!selText) {
+    showToast('⚠️ Select some text first');
+    return;
+  }
+
+  // Use last used mask or default
+  const { lastMask = '*' } = await chrome.storage.session.get('lastMask').catch(() => ({}));
+  const result = await sendToContent({ type: 'HIDE_ALL_OCCURRENCES', text: selText, mask: lastMask });
+  setTimeout(refreshStats, 300);
+  showToast(`🔄 Hidden ${result?.count ?? '?'} occurrence(s)`);
+});
+
 document.getElementById('open-options').addEventListener('click', (e) => {
   e.preventDefault();
   chrome.runtime.openOptionsPage();

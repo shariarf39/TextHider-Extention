@@ -1,6 +1,6 @@
 /**
  * TextHider Background Service Worker
- * Manages context menus, storage defaults, and badge counts.
+ * Manages context menus, storage defaults, badge counts, and keyboard commands.
  */
 
 'use strict';
@@ -21,12 +21,27 @@ const PARENT_ID = 'texthider-root';
 const CUSTOM_ID = 'texthider-custom';
 const UNHIDE_ID = 'texthider-unhide-all';
 const REHIDE_ID = 'texthider-rehide-all';
+const HIDE_ALL_OCC_ID = 'texthider-hide-all-occurrences';
+const QUICK_HIDE_ID = 'texthider-quick-hide';
+
+/**
+ * Guard flag — prevents concurrent buildMenus() calls.
+ * Root cause of the duplicate-ID error:
+ *   onInstalled → storage.set → storage.onChanged → buildMenus() fires twice.
+ */
+let _menuBuilding = false;
 
 /**
  * Build all context menus from storage presets.
  */
 async function buildMenus() {
-  await chrome.contextMenus.removeAll();
+  if (_menuBuilding) return;        // prevent re-entrant / concurrent builds
+  _menuBuilding = true;
+  try {
+    await chrome.contextMenus.removeAll();
+  } catch (_) {}
+  // small yield so removeAll fully commits before creates begin
+  await new Promise((r) => setTimeout(r, 0));
 
   // Root menu
   chrome.contextMenus.create({
@@ -86,22 +101,50 @@ async function buildMenus() {
     title: '🔒 Re-hide all on this page',
     contexts: ['selection'],
   });
+
+  // Separator + advanced actions
+  chrome.contextMenus.create({
+    id: 'texthider-sep3',
+    parentId: PARENT_ID,
+    type: 'separator',
+    contexts: ['selection'],
+  });
+
+  chrome.contextMenus.create({
+    id: HIDE_ALL_OCC_ID,
+    parentId: PARENT_ID,
+    title: '🔁 Hide ALL occurrences of selection',
+    contexts: ['selection'],
+  });
+
+  chrome.contextMenus.create({
+    id: QUICK_HIDE_ID,
+    parentId: PARENT_ID,
+    title: '⚡ Quick hide (last used mask)',
+    contexts: ['selection'],
+  });
+
+  _menuBuilding = false;
 }
 
 // Initialize on install / update
 chrome.runtime.onInstalled.addListener(async () => {
-  // Save defaults if not already set
   const existing = await chrome.storage.sync.get('presets');
   if (!existing.presets) {
+    // Set storage first — this WILL trigger storage.onChanged.
+    // The _menuBuilding guard prevents the duplicate-ID race.
     await chrome.storage.sync.set({ presets: DEFAULT_PRESETS, customMasks: [] });
   }
   await buildMenus();
 });
 
-// Rebuild menus when storage changes (e.g., user adds custom mask from options)
-chrome.storage.onChanged.addListener(async (changes, area) => {
+// Also build menus on service-worker startup (after browser restart)
+chrome.runtime.onStartup.addListener(() => buildMenus());
+
+// Rebuild menus when user changes presets from options page
+chrome.storage.onChanged.addListener((changes, area) => {
   if (area === 'sync' && (changes.presets || changes.customMasks)) {
-    await buildMenus();
+    buildMenus(); // guard flag prevents concurrent builds
   }
 });
 
@@ -130,6 +173,24 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     return;
   }
 
+  if (menuId === HIDE_ALL_OCC_ID) {
+    const { lastMask = '*' } = await chrome.storage.session.get('lastMask').catch(() => ({}));
+    await chrome.tabs.sendMessage(tab.id, {
+      type: 'HIDE_ALL_OCCURRENCES',
+      text: info.selectionText,
+      mask: lastMask,
+    });
+    setTimeout(() => updateBadge(tab.id), 400);
+    return;
+  }
+
+  if (menuId === QUICK_HIDE_ID) {
+    const { lastMask = '*' } = await chrome.storage.session.get('lastMask').catch(() => ({}));
+    await chrome.tabs.sendMessage(tab.id, { type: 'HIDE_TEXT', mask: lastMask });
+    setTimeout(() => updateBadge(tab.id), 400);
+    return;
+  }
+
   if (menuId.startsWith('texthider-preset-')) {
     const presetId = menuId.replace('texthider-preset-', '');
     const { presets = DEFAULT_PRESETS, customMasks = [] } =
@@ -137,9 +198,36 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     const allPresets = [...presets, ...customMasks];
     const preset = allPresets.find((p) => p.id === presetId);
     if (preset) {
+      // Remember last used mask
+      chrome.storage.session.set({ lastMask: preset.mask }).catch(() => {});
       await chrome.tabs.sendMessage(tab.id, { type: 'HIDE_TEXT', mask: preset.mask });
+      setTimeout(() => updateBadge(tab.id), 400);
     }
   }
+});
+
+// Handle keyboard shortcut: Ctrl+Shift+H = hide with last used mask
+chrome.commands.onCommand.addListener(async (command) => {
+  if (command !== 'hide-selection') return;
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  if (!tab?.id) return;
+  const { lastMask = '*' } = await chrome.storage.session.get('lastMask').catch(() => ({}));
+  try {
+    // scripting.executeScript is more reliable than sendMessage for keyboard shortcuts:
+    // the message port can be unresponsive even when the content script is alive.
+    // We post a window.postMessage that the content script's existing listener handles.
+    await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: (mask) => {
+        window.postMessage({ __texthider: true, type: 'HIDE_TEXT', mask }, '*');
+      },
+      args: [lastMask],
+    });
+  } catch (_) {
+    // Fallback: direct sendMessage (e.g. scripting API unavailable on this tab)
+    try { await chrome.tabs.sendMessage(tab.id, { type: 'HIDE_TEXT', mask: lastMask }); } catch (__) {}
+  }
+  setTimeout(() => updateBadge(tab.id), 400);
 });
 
 /**
@@ -214,6 +302,9 @@ function showCustomMaskPrompt() {
 chrome.runtime.onMessage.addListener(async (message, sender) => {
   if (message.type === 'TEXT_HIDDEN' && sender.tab?.id) {
     updateBadge(sender.tab.id);
+    if (message.mask) {
+      chrome.storage.session.set({ lastMask: message.mask }).catch(() => {});
+    }
   }
   if (message.type === 'ALL_REVEALED' && sender.tab?.id) {
     chrome.action.setBadgeText({ text: '', tabId: sender.tab.id });
@@ -222,7 +313,7 @@ chrome.runtime.onMessage.addListener(async (message, sender) => {
     const { mask, label } = message;
     const { customMasks = [] } = await chrome.storage.sync.get('customMasks');
     const id = `custom-${Date.now()}`;
-    customMasks.push({ id, label: label || `Custom: ${mask}`, mask });
+    customMasks.push({ id, label: label || `Custom: ${mask}`, icon: mask, mask });
     await chrome.storage.sync.set({ customMasks });
   }
 });

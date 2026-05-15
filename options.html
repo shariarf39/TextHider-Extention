@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TextHider — Options</title>
+  <meta name="description" content="TextHider Settings: Customize mask presets, themes, and behavior for the TextHider Chrome extension." />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>TextHider — Settings</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -234,7 +236,7 @@
   </div>
 </header>
 
-<div class="container">
+<div class="container" role="main">
 
   <!-- Presets -->
   <div class="card">
@@ -274,6 +276,12 @@
       <div class="theme-card" data-theme="mono">
         <div class="swatch" style="background:#111;border:2px solid #888;"></div>
         <div class="name">Monochrome</div>
+      </div>
+      <div class="theme-card" data-theme="none">
+        <div class="swatch" style="background:transparent;border:2px dashed #555;position:relative;display:flex;align-items:center;justify-content:center;">
+          <span style="font-size:10px;color:#666;border-bottom:2px dotted #888;padding:0 4px;line-height:1.6;">abc</span>
+        </div>
+        <div class="name">No Highlight</div>
       </div>
     </div>
   </div>
@@ -334,6 +342,35 @@
       Reset all presets and settings to factory defaults. This cannot be undone.
     </p>
     <button class="btn btn-danger" id="btn-reset">Reset to Defaults</button>
+  </div>
+
+  <!-- Export / Import -->
+  <div class="card">
+    <h2>📦 Export &amp; Import Presets</h2>
+    <p style="color:#888;font-size:12px;margin-bottom:14px;">
+      Back up your custom presets as a JSON file, or restore from a previous backup.
+    </p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-secondary" id="btn-export">⬇️ Export JSON</button>
+      <label class="btn btn-secondary" style="cursor:pointer;">
+        ⬆️ Import JSON
+        <input type="file" id="btn-import" accept=".json" style="display:none;" />
+      </label>
+    </div>
+    <div id="import-status" style="margin-top:10px;font-size:12px;color:#2ecc71;display:none;"></div>
+  </div>
+
+  <!-- Keyboard shortcut info -->
+  <div class="card">
+    <h2>⌨️ Keyboard Shortcut</h2>
+    <p style="color:#888;font-size:13px;">
+      Press <kbd style="background:#252540;padding:3px 8px;border-radius:4px;color:#fff;font-size:12px;">Ctrl+Shift+H</kbd>
+      (or <kbd style="background:#252540;padding:3px 8px;border-radius:4px;color:#fff;font-size:12px;">⌘+Shift+M</kbd> on Mac)
+      to instantly hide the selected text using your last used mask.
+    </p>
+    <p style="color:#666;font-size:12px;margin-top:8px;">
+      To change the shortcut: go to <code>chrome://extensions/shortcuts</code>
+    </p>
   </div>
 
   <div class="form-actions">
