@@ -335,6 +335,23 @@
     </div>
   </div>
 
+  <!-- Auto-hide Filters -->
+  <div class="card">
+    <h2>🤖 Auto-hide Filters</h2>
+    <p style="color:#888;font-size:12px;margin-bottom:14px;">
+      Words and phrases masked automatically every time a page loads. Useful for hiding
+      recurring sensitive terms like names, account numbers, or passwords across all sites.
+    </p>
+    <div id="autohide-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;"></div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <input type="text" id="autohide-new-text" placeholder="Word or phrase to auto-hide"
+             style="flex:1;min-width:140px;background:#0f0f1a;border:1px solid #333;border-radius:6px;padding:8px 10px;color:#fff;font-size:13px;outline:none;" />
+      <input type="text" id="autohide-new-mask" placeholder="Mask" maxlength="10" value="*"
+             style="width:72px;background:#0f0f1a;border:1px solid #333;border-radius:6px;padding:8px 10px;color:#fff;font-size:13px;outline:none;" />
+      <button class="btn btn-primary" id="btn-add-autohide" style="padding:8px 18px;font-size:13px;">Add</button>
+    </div>
+  </div>
+
   <!-- Danger zone -->
   <div class="card">
     <h2>⚠️ Reset</h2>

@@ -181,6 +181,34 @@
       white-space: nowrap;
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Find & Mask */
+    .find-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 7px;
+    }
+    .find-row input {
+      flex: 1;
+      background: #1a1a2e;
+      border: 2px solid #333;
+      border-radius: 8px;
+      padding: 7px 10px;
+      color: #fff;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .find-row input:focus { border-color: #e94560; }
+    .find-count {
+      font-size: 11px;
+      color: #555;
+      white-space: nowrap;
+      min-width: 52px;
+      text-align: right;
+    }
+    .find-count.has-matches { color: #e94560; font-weight: 700; }
   </style>
 </head>
 <body role="main" aria-label="TextHider extension popup">
@@ -209,7 +237,15 @@
     <button class="btn btn-secondary btn-sm" id="save-custom" title="Save as preset" aria-label="Save custom mask as preset">💾</button>
   </div>
 </div>
-
+<!-- Find & Mask -->
+<div class="section" role="region" aria-label="Find and mask text on page">
+  <div class="section-title">Find &amp; Mask</div>
+  <div class="find-row">
+    <input type="text" id="find-input" placeholder="Search text on page…" aria-label="Find text to mask" />
+    <span class="find-count" id="find-count">&mdash;</span>
+  </div>
+  <button class="btn btn-primary btn-sm" style="width:100%" id="btn-find-mask" aria-label="Mask all matches">&#x1F50D; Mask All Matches</button>
+</div>
 <!-- Stats -->
 <div class="section">
   <div class="section-title">This Page</div>
@@ -234,8 +270,10 @@
   </div>
   <div class="actions" style="margin-top:6px;">
     <button class="btn btn-secondary btn-sm" id="btn-hide-all-occ" title="Hide every occurrence of selected text on this page">🔄 Hide All Occurrences</button>
-  </div>
-</div>
+  </div>  <div class="actions" style="margin-top:6px;">
+    <button class="btn btn-secondary btn-sm" id="btn-undo" title="Undo the last hide operation">&#x21A9; Undo Last</button>
+    <button class="btn btn-secondary btn-sm" id="btn-temp-reveal" title="Reveal all hidden text for 5 seconds, then auto re-hide">&#x23F1; Peek (5s)</button>
+  </div></div>
 
 <footer>
   <a href="#" id="open-options-footer">⚙️ Options &amp; Presets</a>

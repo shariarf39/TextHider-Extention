@@ -16,6 +16,11 @@ const HIDDEN_CLASS = 'texthider-masked';
  */
 let _cachedRange = null;
 
+// Undo stack — groups of spans created per hide operation (most recent last, max 20)
+const _undoStack = [];
+// Timer handle for tempRevealAll() auto re-hide
+let _tempRevealTimer = null;
+
 document.addEventListener('selectionchange', () => {
   const sel = window.getSelection();
   if (sel && !sel.isCollapsed && sel.rangeCount > 0) {
@@ -162,6 +167,7 @@ function hideRangeNodes(range, mask) {
 
   // Process in reverse document order so earlier positions stay valid
   let count = 0;
+  const createdSpans = [];
   for (let i = segments.length - 1; i >= 0; i--) {
     const { node, from, to, text } = segments[i];
     const parent = node.parentNode;
@@ -186,11 +192,17 @@ function hideRangeNodes(range, mask) {
     span.addEventListener('click', handleToggleReveal);
     span.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') handleToggleReveal(e); });
     frag.appendChild(span);
+    createdSpans.push(span);
 
     if (after) frag.appendChild(document.createTextNode(after));
 
     parent.replaceChild(frag, node); // atomic: original preserved until replacement is ready
     count++;
+  }
+
+  if (createdSpans.length > 0) {
+    _undoStack.push({ spans: createdSpans });
+    if (_undoStack.length > 20) _undoStack.shift();
   }
 
   return count;
@@ -248,6 +260,7 @@ function hideAllOccurrences(text, mask) {
   let node;
   while ((node = walker.nextNode())) nodes.push(node);
 
+  const allCreatedSpans = [];
   nodes.forEach((textNode) => {
     regex.lastIndex = 0;
     const parent = textNode.parentNode;
@@ -274,6 +287,7 @@ function hideAllOccurrences(text, mask) {
       span.addEventListener('click', handleToggleReveal);
       span.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') handleToggleReveal(e); });
       frag.appendChild(span);
+      allCreatedSpans.push(span);
       lastIndex = match.index + match[0].length;
       count++;
     }
@@ -285,6 +299,10 @@ function hideAllOccurrences(text, mask) {
     parent.replaceChild(frag, textNode);
   });
 
+  if (allCreatedSpans.length > 0) {
+    _undoStack.push({ spans: allCreatedSpans });
+    if (_undoStack.length > 20) _undoStack.shift();
+  }
   if (count > 0) chrome.runtime.sendMessage({ type: 'TEXT_HIDDEN', mask });
   return count;
 }
@@ -324,6 +342,94 @@ function rehideAll() {
 function getHiddenCount() {
   return document.querySelectorAll(`.${HIDDEN_CLASS}`).length;
 }
+
+/**
+ * Undo the most recent hide operation by restoring all spans in the last undo entry.
+ * Returns the number of spans restored.
+ */
+function undoLast() {
+  const entry = _undoStack.pop();
+  if (!entry || !entry.spans.length) return 0;
+  let count = 0;
+  entry.spans.forEach((span) => {
+    if (!span.isConnected) return;
+    const original = span.getAttribute(HIDDEN_ATTR);
+    if (original === null) return;
+    const parent = span.parentNode;
+    if (!parent) return;
+    parent.replaceChild(document.createTextNode(original), span);
+    parent.normalize(); // merge adjacent text nodes back into one
+    count++;
+  });
+  return count;
+}
+
+/**
+ * Count how many times `text` appears on the page without masking anything.
+ */
+function countMatches(text) {
+  if (!text || !text.trim()) return 0;
+  const escaped = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(escaped, 'gi');
+  let count = 0;
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      if (node.parentElement?.closest('.' + HIDDEN_CLASS)) return NodeFilter.FILTER_REJECT;
+      const tag = node.parentElement?.tagName?.toUpperCase();
+      if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'NOSCRIPT') return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    },
+  });
+  let node;
+  while ((node = walker.nextNode())) {
+    const m = node.textContent.match(regex);
+    if (m) count += m.length;
+  }
+  return count;
+}
+
+/**
+ * Temporarily reveal all hidden spans, then auto re-hide after `seconds` seconds.
+ * Only spans that are currently hidden (not already revealed) are affected.
+ * Returns the count of spans revealed.
+ */
+function tempRevealAll(seconds) {
+  const spans = Array.from(
+    document.querySelectorAll(`.${HIDDEN_CLASS}:not([data-texthider-revealed="true"])`)
+  );
+  spans.forEach((span) => {
+    span.textContent = span.getAttribute(HIDDEN_ATTR);
+    span.setAttribute('data-texthider-revealed', 'true');
+    span.setAttribute('data-texthider-temp-reveal', 'true');
+    span.setAttribute('title', `\ud83d\udd13 Auto-hiding in ${seconds}s\u2026`);
+  });
+  if (_tempRevealTimer) clearTimeout(_tempRevealTimer);
+  if (spans.length > 0) {
+    _tempRevealTimer = setTimeout(() => {
+      document.querySelectorAll(`.${HIDDEN_CLASS}[data-texthider-temp-reveal="true"]`).forEach((span) => {
+        const mask = span.getAttribute('data-texthider-mask');
+        const original = span.getAttribute(HIDDEN_ATTR);
+        span.textContent = buildMask(original, mask);
+        span.setAttribute('data-texthider-revealed', 'false');
+        span.removeAttribute('data-texthider-temp-reveal');
+        span.setAttribute('title', '\ud83d\udd12 Hidden by TextHider \u2014 Click to reveal');
+      });
+      _tempRevealTimer = null;
+      chrome.runtime.sendMessage({ type: 'TEMP_REVEAL_DONE' }).catch(() => {});
+    }, seconds * 1000);
+  }
+  return spans.length;
+}
+
+// Apply auto-hide word filters on page load
+(async () => {
+  try {
+    const { autoHideFilters = [] } = await chrome.storage.sync.get('autoHideFilters');
+    autoHideFilters.forEach(({ text, mask, enabled }) => {
+      if (enabled !== false && text && text.trim()) hideAllOccurrences(text, mask || '*');
+    });
+  } catch (_) {}
+})();
 
 // Listen for postMessage from the injected custom-mask prompt (same page context)
 window.addEventListener('message', (event) => {
@@ -370,6 +476,21 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       applyThemeCSS(message.theme);
       sendResponse({ success: true });
       break;
+    case 'UNDO_LAST': {
+      const n = undoLast();
+      sendResponse({ success: true, count: n });
+      break;
+    }
+    case 'COUNT_MATCHES': {
+      const n = countMatches(message.text);
+      sendResponse({ count: n });
+      break;
+    }
+    case 'TEMP_REVEAL': {
+      const n = tempRevealAll(message.seconds || 5);
+      sendResponse({ success: true, count: n });
+      break;
+    }
   }
   return true; // keep channel open for async
 });

@@ -19,6 +19,7 @@ const DEFAULT_SETTINGS = {
   tooltip: true,
   badge: true,
   persist: false,
+  autoHideFilters: [],
 };
 
 const THEME_STYLES = {
@@ -117,6 +118,73 @@ function setupDrag(item) {
   });
 }
 
+// ---- Auto-hide Filters ----
+
+function renderAutoHideFilters() {
+  const list = document.getElementById('autohide-list');
+  if (!list) return;
+  list.innerHTML = '';
+  const filters = state.autoHideFilters || [];
+  if (filters.length === 0) {
+    list.innerHTML = '<p style="color:#555;font-size:12px;font-style:italic;">No filters added yet.</p>';
+    return;
+  }
+  filters.forEach((filter, idx) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;background:#0f0f1a;border:1px solid #252540;border-radius:8px;padding:10px 12px;';
+    row.innerHTML = `
+      <label class="toggle" title="Enable/disable this filter">
+        <input type="checkbox" ${filter.enabled !== false ? 'checked' : ''} data-idx="${idx}" class="autohide-toggle" />
+        <span class="toggle-slider"></span>
+      </label>
+      <span style="flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escHtml(filter.text)}">${escHtml(filter.text)}</span>
+      <code style="background:#1a1a2e;border-radius:4px;padding:2px 8px;font-size:12px;color:#e94560;">${escHtml(filter.mask || '*')}</code>
+      <button class="btn-remove autohide-remove" data-idx="${idx}" title="Remove filter" style="background:none;border:none;color:#555;cursor:pointer;font-size:16px;padding:4px;border-radius:4px;">&#x2715;</button>
+    `;
+    list.appendChild(row);
+  });
+
+  list.querySelectorAll('.autohide-toggle').forEach((cb) => {
+    cb.addEventListener('change', (e) => {
+      const i = parseInt(e.target.dataset.idx, 10);
+      if (state.autoHideFilters[i]) state.autoHideFilters[i].enabled = e.target.checked;
+    });
+  });
+
+  list.querySelectorAll('.autohide-remove').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      const i = parseInt(e.target.closest('[data-idx]').dataset.idx, 10);
+      state.autoHideFilters.splice(i, 1);
+      renderAutoHideFilters();
+    });
+    btn.addEventListener('mouseenter', (e) => { e.target.style.color = '#e94560'; });
+    btn.addEventListener('mouseleave', (e) => { e.target.style.color = '#555'; });
+  });
+}
+
+document.getElementById('btn-add-autohide').addEventListener('click', () => {
+  const textEl = document.getElementById('autohide-new-text');
+  const maskEl = document.getElementById('autohide-new-mask');
+  const text = textEl.value.trim();
+  const mask = maskEl.value.trim() || '*';
+  if (!text) { textEl.focus(); return; }
+  if (!state.autoHideFilters) state.autoHideFilters = [];
+  // Prevent duplicates
+  if (state.autoHideFilters.some((f) => f.text.toLowerCase() === text.toLowerCase())) {
+    textEl.select();
+    return;
+  }
+  state.autoHideFilters.push({ text, mask, enabled: true });
+  renderAutoHideFilters();
+  textEl.value = '';
+  maskEl.value = '*';
+  textEl.focus();
+});
+
+document.getElementById('autohide-new-text').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') document.getElementById('btn-add-autohide').click();
+});
+
 // ---- Theme ----
 function renderTheme() {
   document.querySelectorAll('.theme-card').forEach((card) => {
@@ -149,6 +217,7 @@ function applyStateToForm() {
   document.getElementById('opt-persist').checked = !!state.persist;
   renderTheme();
   renderPresets();
+  renderAutoHideFilters();
 }
 
 // ---- Save ----
@@ -177,6 +246,7 @@ document.getElementById('btn-save').addEventListener('click', async () => {
     tooltip: state.tooltip,
     badge: state.badge,
     persist: state.persist,
+    autoHideFilters: state.autoHideFilters || [],
   });
 
   await applyThemeToContentScripts();

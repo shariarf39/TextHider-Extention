@@ -2,8 +2,8 @@
   "manifest_version": 3,
   "name": "TextHider - Censor & Mask Text",
   "short_name": "TextHider",
-  "version": "1.0.0",
-  "description": "Select text, right-click, and hide it with ..., ***, emojis or a custom mask. Each word is replaced by the same number of symbols.",
+  "version": "1.0.1",
+  "description": "Hide & censor any text on any webpage. Select, right-click, mask with symbols or emojis. Perfect for screenshots & screensharing.",
   "author": "TextHider",
   "homepage_url": "https://github.com/shariarf39/TextHider-Extention",
 
